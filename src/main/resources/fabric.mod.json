@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "glinteverything",
+  "version": "${version}",
+  "name": "Glint Everything",
+  "description": "Give ANY item the enchantment glint. Whitelist items to make them shimmer, recolor the glint globally or per item, restyle the animation (speed, size, angle, direction), and tame or hide vanilla and other mods' glint - all from a smooth animated settings screen.",
+  "authors": ["Limucc-dev"],
+  "contact": {
+    "sources": "https://github.com/dev-limucc/glint-everything"
+  },
+  "license": "MIT",
+  "icon": "assets/glinteverything/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main":    ["dev.limucc.glinteverything.GlintEverything"],
+    "client":  ["dev.limucc.glinteverything.client.GlintEverythingClient"],
+    "modmenu": ["dev.limucc.glinteverything.client.ModMenuIntegration"]
+  },
+  "mixins": [
+    {
+      "config": "glinteverything.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": "${loader_req}",
+    "minecraft":    "${mc_range}",
+    "java":         ">=${java_req}",
+    "fabric-api":   "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
