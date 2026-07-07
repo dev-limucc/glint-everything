@@ -10,6 +10,7 @@ public final class GlintContext {
 
     private static final ThreadLocal<int[]> EXTRACT = ThreadLocal.withInitial(() -> new int[1]);
     private static final ThreadLocal<int[]> RENDER = ThreadLocal.withInitial(() -> new int[1]);
+    private static final ThreadLocal<int[]> ARMOR = ThreadLocal.withInitial(() -> new int[1]);
 
     private GlintContext() {}
 
@@ -18,4 +19,7 @@ public final class GlintContext {
 
     public static void setRender(int color) { RENDER.get()[0] = color; }
     public static int getRender() { return RENDER.get()[0]; }
+
+    public static void setArmor(int color) { ARMOR.get()[0] = color; }
+    public static int getArmor() { return ARMOR.get()[0]; }
 }

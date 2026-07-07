@@ -10,6 +10,7 @@
     "ItemStackMixin",
     "ItemStackRenderStateMixin",
     "ItemSubmitMixin",
+    "RenderTypesMixin",
     "TextureTransformMixin"
   ],
   "injectors": {

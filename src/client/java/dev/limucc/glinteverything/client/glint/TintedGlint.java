@@ -37,20 +37,34 @@ public final class TintedGlint {
     /** Swap a vanilla glint render type for its tinted clone; anything else passes through. */
     public static RenderType swap(RenderType vanilla, int color) {
         if (color == 0 || (color & 0x00FFFFFF) == 0x00FFFFFF && (color >>> 24) == 0xFF) return vanilla;
-        if (vanilla == RenderTypes.glint()) return get(Kind.ITEM, color);
-        if (vanilla == RenderTypes.entityGlint()) return get(Kind.ENTITY, color);
-        if (vanilla == RenderTypes.glintTranslucent()) return get(Kind.TRANSLUCENT, color);
-        if (vanilla == RenderTypes.armorEntityGlint()) return get(Kind.ARMOR, color);
+        if (vanilla == RenderTypes.glint()) return orElse(get(Kind.ITEM, color), vanilla);
+        if (vanilla == RenderTypes.entityGlint()) return orElse(get(Kind.ENTITY, color), vanilla);
+        if (vanilla == RenderTypes.glintTranslucent()) return orElse(get(Kind.TRANSLUCENT, color), vanilla);
+        if (vanilla == RenderTypes.armorEntityGlint()) return orElse(get(Kind.ARMOR, color), vanilla);
         return vanilla;
     }
 
+    /**
+     * Tinted armor glint or null. Called from inside {@code RenderTypes.armorEntityGlint()}'s
+     * return-modifier, so nothing here may call any {@code RenderTypes} glint getter.
+     */
+    public static RenderType armor(int color) {
+        if (color == 0 || (color & 0x00FFFFFF) == 0x00FFFFFF && (color >>> 24) == 0xFF) return null;
+        return get(Kind.ARMOR, color);
+    }
+
+    private static RenderType orElse(RenderType type, RenderType fallback) {
+        return type != null ? type : fallback;
+    }
+
+    /** Tinted clone or null when the texture could not be built. Never touches vanilla getters. */
     private static RenderType get(Kind kind, int color) {
         long key = ((long) color << 8) | kind.ordinal();
         RenderType cached = TYPES.get(key);
         if (cached != null) return cached;
 
         Identifier texture = texture(kind == Kind.ARMOR, color);
-        if (texture == null) return vanillaFor(kind);   // texture load failed; degrade cleanly
+        if (texture == null) return null;
 
         String name = "glinteverything:" + kind.name().toLowerCase() + "_" + Integer.toHexString(color);
         RenderSetup.RenderSetupBuilder b = RenderSetup.builder(RenderPipelines.GLINT).withTexture("Sampler0", texture);
@@ -64,15 +78,6 @@ public final class TintedGlint {
         };
         TYPES.put(key, type);
         return type;
-    }
-
-    private static RenderType vanillaFor(Kind kind) {
-        return switch (kind) {
-            case ITEM -> RenderTypes.glint();
-            case ENTITY -> RenderTypes.entityGlint();
-            case TRANSLUCENT -> RenderTypes.glintTranslucent();
-            case ARMOR -> RenderTypes.armorEntityGlint();
-        };
     }
 
     /** A copy of the vanilla glint texture multiplied by the ARGB color, uploaded once. */
