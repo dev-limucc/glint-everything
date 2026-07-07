@@ -76,8 +76,24 @@ public final class TintedGlint {
             case ARMOR       -> RenderType.create(name, b.setTextureTransform(TextureTransform.ARMOR_ENTITY_GLINT_TEXTURING)
                                                          .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING).createRenderSetup());
         };
+        registerFixedBuffer(type);
         TYPES.put(key, type);
         return type;
+    }
+
+    /**
+     * Adds the type to the game's fixed-buffer map so its batch flushes AFTER the base item
+     * geometry (map order). Left in the shared buffer it would flush first, fail the GLINT
+     * pipeline's depth-EQUAL test against an empty depth buffer, and never show a pixel.
+     */
+    private static void registerFixedBuffer(RenderType type) {
+        try {
+            var fixed = ((dev.limucc.glinteverything.client.mixin.BufferSourceAccessor)
+                    Minecraft.getInstance().renderBuffers().bufferSource()).ge$fixedBuffers();
+            fixed.putIfAbsent(type, new com.mojang.blaze3d.vertex.ByteBufferBuilder(type.bufferSize()));
+        } catch (Exception e) {
+            GlintEverything.LOGGER.warn("Could not register tinted glint buffer", e);
+        }
     }
 
     /** A copy of the vanilla glint texture multiplied by the ARGB color, uploaded once. */
@@ -90,10 +106,14 @@ public final class TintedGlint {
             for (int y = 0; y < img.getHeight(); y++) {
                 for (int x = 0; x < img.getWidth(); x++) {
                     int p = img.getPixel(x, y);   // ARGB
+                    // The vanilla glint texture is almost pure blue/purple, so channel-multiply
+                    // yields near-black (invisible under the additive glint blend). Recolor by
+                    // intensity instead: brightest channel carries the streak shape.
+                    int intensity = Math.max((p >> 16) & 0xFF, Math.max((p >> 8) & 0xFF, p & 0xFF));
                     int a = ((p >>> 24) & 0xFF) * ca / 255;
-                    int r = ((p >> 16) & 0xFF) * cr / 255;
-                    int g = ((p >> 8) & 0xFF) * cg / 255;
-                    int bch = (p & 0xFF) * cb / 255;
+                    int r = intensity * cr / 255;
+                    int g = intensity * cg / 255;
+                    int bch = intensity * cb / 255;
                     img.setPixel(x, y, (a << 24) | (r << 16) | (g << 8) | bch);
                 }
             }

@@ -56,6 +56,12 @@ loom {
     }
 }
 
+// dev convenience:  gradlew runClient "-PquickPlay=New World"  auto-joins that singleplayer save
+if (findProperty('quickPlay')) {
+    loom.runs.client.programArgs('--quickPlaySingleplayer', findProperty('quickPlay').toString())
+    loom.runs.client.programArgs('--username', 'GlintDev')
+}
+
 // version-specific source overlays (Gfx facade, screen/key glue, foil render hooks)
 t.overlays.each { sourceSets.client.java.srcDir "src/client/versions/${it}/java" }
 

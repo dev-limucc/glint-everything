@@ -233,8 +233,8 @@ public abstract class GlintScreenCore extends Screen {
             } else if (hov) {
                 g.fill(contentLeft - 2, ry, contentRight, ry + 20, HOVER_WASH);
             }
-            Item item = GlintRuntime.byId(id);
-            if (item != null) g.item(new ItemStack(item), contentLeft + 2, ry + 2);
+            ItemStack icon = iconFor(id);
+            if (icon != null) g.item(icon, contentLeft + 2, ry + 2);
             g.text(font, trimmed(id, contentRight - contentLeft - 64), contentLeft + 24, ry + 6, sel ? BRIGHT : TXT);
 
             Integer override = cfg().itemColors.get(id);
@@ -312,6 +312,20 @@ public abstract class GlintScreenCore extends Screen {
         g.text(font, "§7Settings save on close. Glint strength & vanilla", contentLeft, y, HEAD); y += 12;
         g.text(font, "§7speed also honor Accessibility options.", contentLeft, y, HEAD); y += 20;
         g.text(font, "§8MIT © dev-limucc", contentLeft, y, HINT);
+    }
+
+    private final java.util.Map<String, ItemStack> iconCache = new java.util.HashMap<>();
+
+    /** Icon stack or null. At the title screen item components aren't bound yet and ItemStack construction throws. */
+    private ItemStack iconFor(String id) {
+        if (iconCache.containsKey(id)) return iconCache.get(id);
+        ItemStack stack = null;
+        try {
+            Item item = GlintRuntime.byId(id);
+            if (item != null) stack = new ItemStack(item);
+        } catch (Exception ignored) {}
+        iconCache.put(id, stack);
+        return stack;
     }
 
     private int listBottom() {

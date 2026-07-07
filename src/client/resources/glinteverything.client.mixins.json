@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "dev.limucc.glinteverything.client.mixin",
   "client": [
+    "BufferSourceAccessor",
     "EquipmentLayerRendererMixin",
     "ItemFeatureRendererMixin",
     "ItemModelResolverMixin",
