@@ -1,6 +1,7 @@
 package dev.limucc.glinteverything.client.gui;
 
 import dev.limucc.glinteverything.client.compat.Gfx;
+import dev.limucc.glinteverything.client.compat.ScreenNav;
 import dev.limucc.glinteverything.client.config.GlintConfig;
 import dev.limucc.glinteverything.client.glint.GlintRuntime;
 import dev.limucc.glinteverything.client.gui.anim.Easing;
@@ -546,6 +547,6 @@ public abstract class GlintScreenCore extends Screen {
     @Override
     public void onClose() {
         GlintRuntime.saveAndApply();
-        this.minecraft.setScreen(parent);
+        ScreenNav.open(this.minecraft, parent);
     }
 }

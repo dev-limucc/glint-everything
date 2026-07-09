@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_21",
+  "package": "dev.limucc.glinteverything.client.mixin",
+  "client": [
+    "BufferSourceAccessor",
+    "ItemSubmitMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

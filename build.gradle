@@ -29,9 +29,11 @@ apply plugin: ((findProperty('target') ?: '26.1.2').toString().startsWith('1.')
 // obfuscated MC: they need Mojang mappings + remapped (mod*) dependencies.
 def TARGETS = [
     '1.21.11': [range: '1.21.11', fapi: '0.141.4+1.21.11', modmenu: '17.0.0',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-matrix',  'screen-event', 'key-event', 'foil-event']],
+                overlays: ['gfx-matrix',  'screen-event', 'key-event', 'foil-event', 'nav-legacy', 'submit-legacy']],
     '26.1.2':  [range: '~26.1',   fapi: '0.150.0+26.1.2',  modmenu: '18.0.0-beta.1', java: 25, legacy: false, loaderReq: '>=0.19.2',
-                overlays: ['gfx-extract', 'screen-26',    'key-26',    'foil-26']],
+                overlays: ['gfx-extract', 'screen-26',    'key-26',    'foil-26',    'nav-legacy', 'submit-legacy']],
+    '26.2':    [range: '~26.2',   fapi: '0.154.2+26.2',    modmenu: '20.0.0',        java: 25, legacy: false, loaderReq: '>=0.19.3',
+                overlays: ['gfx-extract', 'screen-26',    'key-26',    'foil-262',   'nav-262',    'submit-262']],
 ]
 
 def targetVer = (findProperty('target') ?: '26.1.2').toString()
@@ -64,6 +66,8 @@ if (findProperty('quickPlay')) {
 
 // version-specific source overlays (Gfx facade, screen/key glue, foil render hooks)
 t.overlays.each { sourceSets.client.java.srcDir "src/client/versions/${it}/java" }
+// overlays may also carry version-specific resources (e.g. per-era mixin configs)
+t.overlays.each { def rd = file("src/client/versions/${it}/resources"); if (rd.exists()) sourceSets.client.resources.srcDir rd }
 
 repositories {
     mavenCentral()

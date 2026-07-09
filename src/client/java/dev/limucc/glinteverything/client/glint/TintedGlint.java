@@ -2,6 +2,7 @@ package dev.limucc.glinteverything.client.glint;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import dev.limucc.glinteverything.GlintEverything;
+import dev.limucc.glinteverything.client.compat.GlintBuffers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
@@ -76,24 +77,9 @@ public final class TintedGlint {
             case ARMOR       -> RenderType.create(name, b.setTextureTransform(TextureTransform.ARMOR_ENTITY_GLINT_TEXTURING)
                                                          .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING).createRenderSetup());
         };
-        registerFixedBuffer(type);
+        GlintBuffers.register(type);
         TYPES.put(key, type);
         return type;
-    }
-
-    /**
-     * Adds the type to the game's fixed-buffer map so its batch flushes AFTER the base item
-     * geometry (map order). Left in the shared buffer it would flush first, fail the GLINT
-     * pipeline's depth-EQUAL test against an empty depth buffer, and never show a pixel.
-     */
-    private static void registerFixedBuffer(RenderType type) {
-        try {
-            var fixed = ((dev.limucc.glinteverything.client.mixin.BufferSourceAccessor)
-                    Minecraft.getInstance().renderBuffers().bufferSource()).ge$fixedBuffers();
-            fixed.putIfAbsent(type, new com.mojang.blaze3d.vertex.ByteBufferBuilder(type.bufferSize()));
-        } catch (Exception e) {
-            GlintEverything.LOGGER.warn("Could not register tinted glint buffer", e);
-        }
     }
 
     /** A copy of the vanilla glint texture multiplied by the ARGB color, uploaded once. */

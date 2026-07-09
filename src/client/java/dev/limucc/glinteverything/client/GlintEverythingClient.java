@@ -1,6 +1,7 @@
 package dev.limucc.glinteverything.client;
 
 import dev.limucc.glinteverything.client.compat.KeyCompat;
+import dev.limucc.glinteverything.client.compat.ScreenNav;
 import dev.limucc.glinteverything.client.glint.GlintRuntime;
 import dev.limucc.glinteverything.client.gui.GlintEverythingScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -19,7 +20,7 @@ public class GlintEverythingClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             while (openSettingsKey.consumeClick()) {
-                if (mc.screen == null) mc.setScreen(new GlintEverythingScreen(null));
+                if (ScreenNav.current(mc) == null) ScreenNav.open(mc, new GlintEverythingScreen(null));
             }
         });
     }
