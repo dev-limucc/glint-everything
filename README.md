@@ -5,6 +5,10 @@ looks and moves.
 
 > Fabric · Minecraft **1.21.11** and **26.1.x** · client-side only · by **dev-limucc**
 
+<p align="center">
+  <img src="https://cdn.modrinth.com/data/mfcsZ4EP/images/aecc109027585fc35ab85d3cacad6a9e0bd122d5.png" alt="Whitelisted Totem of Undying with glint" width="70%" />
+</p>
+
 ## Features
 
 | | |
@@ -38,3 +42,11 @@ Multi-version layout: shared code in `src/client/java`, per-era shims in `src/cl
 (`gfx-*` graphics facade, `screen-*` render glue, `key-*` keybinding, `foil-*` render hooks).
 
 MIT © dev-limucc
+
+## Gallery
+
+<p align="center">
+  <img src="https://cdn.modrinth.com/data/mfcsZ4EP/images/89ce2e2fca29af0c595116f2807e467f1924857b.png" alt="Whitelist editor" width="32%" />
+  <img src="https://cdn.modrinth.com/data/mfcsZ4EP/images/8d7542da74c1422a2182a77f68ba80bdd172e0e1.png" alt="Color customization" width="32%" />
+  <img src="https://cdn.modrinth.com/data/mfcsZ4EP/images/ad7d7b7d52902c72a57bb7477ac006be27955b42.png" alt="General settings" width="32%" />
+</p>
