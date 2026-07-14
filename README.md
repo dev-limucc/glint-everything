@@ -1,5 +1,7 @@
 # Glint Everything
 
+[![build](https://github.com/dev-limucc/glint-everything/actions/workflows/build.yml/badge.svg)](https://github.com/dev-limucc/glint-everything/actions/workflows/build.yml)
+
 Give **any** item the enchantment glint — and take full control of how every glint in the game
 looks and moves.
 
