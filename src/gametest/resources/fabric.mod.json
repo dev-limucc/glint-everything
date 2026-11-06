@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "glinteverything-test",
+  "version": "1.0.0",
+  "name": "Glint Everything client gametest",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["dev.limucc.glinteverything.gametest.GlintEverythingGameTest"]
+  },
+  "depends": {
+    "glinteverything": "*"
+  }
+}

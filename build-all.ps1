@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 # which cannot compile the 26.x targets ("release version 25 not supported").
 $env:JAVA_HOME = "C:\Users\Windows 11\AppData\Roaming\ATLauncher\runtimes\minecraft\java-runtime-epsilon\windows-x64\java-runtime-epsilon"
 
-$targets = @('1.21.11', '26.1.2', '26.2')
+$targets = @('1.21.11', '26.1.2', '26.2', '26.3')
 $failed = @()
 
 foreach ($t in $targets) {
@@ -20,8 +20,10 @@ foreach ($t in $targets) {
     }
 }
 
+$modVersion = ((Get-Content gradle.properties | Where-Object { $_ -match '^mod_version=' }) -replace '^mod_version=', '').Trim()
 New-Item -ItemType Directory -Force dist | Out-Null
-Copy-Item "build\libs\glinteverything-*+mc*.jar" dist\ -Force
+Remove-Item dist\*.jar -ErrorAction SilentlyContinue   # dist holds only the current version
+Copy-Item "build\libs\glinteverything-$modVersion+mc*.jar" dist\ -Force
 Write-Host "`nJars in dist\:" -ForegroundColor Green
 Get-ChildItem dist\*.jar | Select-Object -ExpandProperty Name
 

@@ -1,5 +1,6 @@
 package dev.limucc.glinteverything.client.gui.widget;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.limucc.glinteverything.client.compat.Gfx;
 import net.minecraft.client.gui.Font;
 import net.minecraft.util.Util;
@@ -65,18 +66,18 @@ public class FlatTextField {
         return true;
     }
 
-    /** Handle a key press (GLFW keycode); true when consumed. */
+    /** Handle a key press (InputConstants.KEY_* code - GLFW codes up to 26.2, SDL scancodes from 26.3); true when consumed. */
     public boolean keyPressed(int key) {
         if (!focused) return false;
         switch (key) {
-            case 259 -> { if (caret > 0) { text = text.substring(0, caret - 1) + text.substring(caret); caret--; } }   // backspace
-            case 261 -> { if (caret < text.length()) text = text.substring(0, caret) + text.substring(caret + 1); }    // delete
-            case 263 -> caret = Math.max(0, caret - 1);                                                                // left
-            case 262 -> caret = Math.min(text.length(), caret + 1);                                                    // right
-            case 268 -> caret = 0;                                                                                     // home
-            case 269 -> caret = text.length();                                                                         // end
-            case 256 -> focused = false;                                                                               // esc
-            default -> { return key != 257; }   // let enter fall through to the screen
+            case InputConstants.KEY_BACKSPACE -> { if (caret > 0) { text = text.substring(0, caret - 1) + text.substring(caret); caret--; } }   // backspace
+            case InputConstants.KEY_DELETE -> { if (caret < text.length()) text = text.substring(0, caret) + text.substring(caret + 1); }    // delete
+            case InputConstants.KEY_LEFT -> caret = Math.max(0, caret - 1);                                                                // left
+            case InputConstants.KEY_RIGHT -> caret = Math.min(text.length(), caret + 1);                                                    // right
+            case InputConstants.KEY_HOME -> caret = 0;                                                                                     // home
+            case InputConstants.KEY_END -> caret = text.length();                                                                         // end
+            case InputConstants.KEY_ESCAPE -> focused = false;                                                                               // esc
+            default -> { return key != InputConstants.KEY_RETURN && key != InputConstants.KEY_NUMPADENTER; }   // let enter fall through to the screen
         }
         return true;
     }

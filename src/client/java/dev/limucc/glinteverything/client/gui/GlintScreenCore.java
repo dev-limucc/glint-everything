@@ -1,5 +1,6 @@
 package dev.limucc.glinteverything.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.limucc.glinteverything.client.compat.Gfx;
 import dev.limucc.glinteverything.client.compat.ScreenNav;
 import dev.limucc.glinteverything.client.config.GlintConfig;
@@ -96,7 +97,8 @@ public abstract class GlintScreenCore extends Screen {
     @Override
     protected void init() {
         int cx = width / 2, cy = height / 2;
-        panelLeft = cx - 260; panelRight = cx + 260;
+        int half = Math.min(260, cx - 4);   // shrink on narrow GUI widths (720p @ scale 3 = 427px) instead of clipping
+        panelLeft = cx - half; panelRight = cx + half;
         panelTop = Math.max(8, cy - 150); panelBottom = Math.min(height - 8, cy + 150);
         sidebarX = panelLeft + 12; sidebarW = 92;
         contentLeft = panelLeft + 118; contentRight = panelRight - 16;
@@ -375,7 +377,7 @@ public abstract class GlintScreenCore extends Screen {
     public boolean keyPressed(KeyEvent event) {
         int key = event.key();
         if (fldAdd.focused) {
-            if (key == 257 || key == 335) { addCurrent(); return true; }   // enter
+            if (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_NUMPADENTER) { addCurrent(); return true; }   // enter
             if (fldAdd.keyPressed(key)) return true;
         }
         if (perItemEditor.hexFocused() && perItemEditor.keyPressed(key)) return true;
