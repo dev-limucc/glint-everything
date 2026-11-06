@@ -45,6 +45,15 @@ public final class GlintTypes {
         return get(Kind.ARMOR, color);
     }
 
+    /**
+     * Tinted entity glint (held shield / trident special models) or null. Called from inside
+     * {@code RenderTypes.entityGlint()}'s return-modifier, so nothing here may call a {@code RenderTypes} glint getter.
+     */
+    public static RenderType entity(int color) {
+        if (TintedGlint.isVanilla(color)) return null;
+        return get(Kind.ENTITY, color);
+    }
+
     private static RenderType orElse(RenderType type, RenderType fallback) {
         return type != null ? type : fallback;
     }

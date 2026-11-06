@@ -52,4 +52,12 @@ public abstract class ItemRendererMixin {
         int color = GlintContext.getRender();
         return color == 0 ? original : GlintTypes.swap(original, color);
     }
+
+    /** Non-item models (held shield / trident) get the entity glint inline in {@code getFoilBuffer}. */
+    @ModifyExpressionValue(method = "getFoilBuffer",
+            at = @At(value = "INVOKE", target = TYPES + "entityGlint" + RETURNS))
+    private static RenderType ge$tintInlineEntityGlint(RenderType original) {
+        int color = GlintContext.getRender();
+        return color == 0 ? original : GlintTypes.swap(original, color);
+    }
 }

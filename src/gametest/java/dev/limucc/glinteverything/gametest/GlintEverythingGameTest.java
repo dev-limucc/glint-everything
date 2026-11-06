@@ -36,6 +36,13 @@ public class GlintEverythingGameTest implements FabricClientGameTest {
         System.out.println("[GE-GAMETEST] INFO: " + what);
     }
 
+    private static final String KNOWN_NO_SPECIAL_TINT = "1.21.11";
+
+    private static String mcVersion() {
+        return net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer("minecraft")
+                .map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("?");
+    }
+
     private static GlintConfig cfg() {
         return GlintRuntime.config();
     }
@@ -261,14 +268,43 @@ public class GlintEverythingGameTest implements FabricClientGameTest {
             ctx.waitTicks(5);
             ctx.takeScreenshot("ge-10-hotbar-hud-tinted");
 
-            // ── Scene F2: special models (shield / trident) - info only, screenshots for the manual pass ──
+            // ── Scene F2: special held models (shield / trident): vanilla glint vs red-tinted glint ──
             command(world, "gamemode creative @p");
-            command(world, "item replace entity @p weapon.mainhand with minecraft:shield[enchantments={unbreaking:1}]");
-            ctx.waitTicks(15);
-            ctx.takeScreenshot("ge-11-shield-tinted-red");
-            command(world, "item replace entity @p weapon.mainhand with minecraft:trident[enchantments={loyalty:1}]");
-            ctx.waitTicks(15);
-            ctx.takeScreenshot("ge-12-trident-tinted-red");
+            String[][] special = {
+                    {"shield", "minecraft:shield[enchantments={unbreaking:1}]"},
+                    {"trident", "minecraft:trident[enchantments={loyalty:1}]"}};
+            for (String[] sp : special) {
+                ctx.runOnClient(mc -> {
+                    cfg().naturalGlint = GlintConfig.NaturalMode.DEFAULT;
+                    GlintRuntime.rebuild();
+                });
+                command(world, "item replace entity @p weapon.mainhand with " + sp[1]);
+                ctx.waitTicks(15);
+                BufferedImage spVanilla = read(ctx.takeScreenshot("ge-11-" + sp[0] + "-vanilla-glint"));
+                ctx.runOnClient(mc -> {
+                    cfg().naturalGlint = GlintConfig.NaturalMode.TINTED;
+                    cfg().naturalColor = 0xFFFF2020;
+                    GlintRuntime.rebuild();
+                });
+                ctx.waitTicks(10);
+                BufferedImage spRed = read(ctx.takeScreenshot("ge-11-" + sp[0] + "-tinted-red"));
+                int sx0 = w / 4, sy0 = h / 4;
+                long spBefore = dominance(spVanilla, 0, sx0, sy0, w, h);
+                long spAfter = dominance(spRed, 0, sx0, sy0, w, h);
+                int spChg = changed(spVanilla, spRed, sx0, sy0, w, h);
+                info(sp[0] + " red-tint: red-dominance " + spBefore + " -> " + spAfter + " changedPixels=" + spChg);
+                boolean tinted = spChg > 150 && spAfter > spBefore + 1500;
+                if (KNOWN_NO_SPECIAL_TINT.equals(mcVersion())) {
+                    // 1.21.11: shield/trident models draw their glint from ModelPartSubmit at render time, where the tint is unknown.
+                    info("KNOWN LIMITATION (MC " + mcVersion() + "): held " + sp[0] + " glint tint " + (tinted ? "works" : "is not applied"));
+                } else {
+                    check(tinted, "held " + sp[0] + " glint is tinted red");
+                }
+            }
+            ctx.runOnClient(mc -> {
+                cfg().naturalGlint = GlintConfig.NaturalMode.DEFAULT;
+                GlintRuntime.rebuild();
+            });
 
             // ── Scene G: armor glint, third person ─────────────────────────────────────
             command(world, "gamemode creative @p");

@@ -9,8 +9,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 /**
- * While EquipmentLayerRenderer publishes an armor tint, hand out the tinted armor glint clone.
- * {@code GlintTypes.armor} never calls back into RenderTypes, so this cannot recurse.
+ * MC 1.21.11-26.2. While EquipmentLayerRenderer publishes an armor tint, hand out the tinted armor glint clone;
+ * while {@code ItemStackRenderState.submit} publishes an item tint, hand out the tinted entity glint clone (the
+ * held shield / trident special models fetch {@code RenderTypes.entityGlint()} directly, bypassing the foil buffer
+ * hooks). {@code GlintTypes.armor/entity} never call back into RenderTypes, so this cannot recurse.
  */
 @Mixin(RenderTypes.class)
 public abstract class RenderTypesMixin {
@@ -20,6 +22,14 @@ public abstract class RenderTypesMixin {
         int color = GlintContext.getArmor();
         if (color == 0) return original;
         RenderType tinted = GlintTypes.armor(color);
+        return tinted != null ? tinted : original;
+    }
+
+    @ModifyReturnValue(method = "entityGlint", at = @At("RETURN"), require = 0)
+    private static RenderType ge$tintEntityGlint(RenderType original) {
+        int color = GlintContext.getExtract();
+        if (color == 0) return original;
+        RenderType tinted = GlintTypes.entity(color);
         return tinted != null ? tinted : original;
     }
 }
