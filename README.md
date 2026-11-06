@@ -5,7 +5,7 @@
 Give **any** item the enchantment glint — and take full control of how every glint in the game
 looks and moves.
 
-> Fabric · Minecraft **1.21.11** and **26.1.x** · client-side only · by **dev-limucc**
+> Fabric · Minecraft **1.21.11**, **26.1.x**, **26.2** and **26.3** · client-side only · by **dev-limucc**
 
 <p align="center">
   <img src="https://cdn.modrinth.com/data/mfcsZ4EP/images/aecc109027585fc35ab85d3cacad6a9e0bd122d5.png" alt="Whitelisted Totem of Undying with glint" width="70%" />
@@ -35,13 +35,15 @@ Armor worn on your body gets the tinted glint too.
 ## Building
 
 ```powershell
-.\build-all.ps1        # both targets -> dist\
+.\build-all.ps1        # all targets -> dist\
 # or one target:
-.\gradlew.bat build "-Ptarget=26.1.2"
+.\gradlew.bat build "-Ptarget=26.3"
+.\gradlew.bat runClientGameTest "-Ptarget=26.3"   # automated in-game test (glint/tint/animation/GUI + screenshots)
+.\gradlew.bat runProductionClient "-Ptarget=26.3" -PprodWorld=<save>   # launch the BUILT jar
 ```
 
 Multi-version layout: shared code in `src/client/java`, per-era shims in `src/client/versions/`
-(`gfx-*` graphics facade, `screen-*` render glue, `key-*` keybinding, `foil-*` render hooks).
+(`gfx-*` graphics facade, `screen-*` render glue, `key-*` keybinding, `foil-*` render hooks, `types-*` tinted render types).
 
 MIT © dev-limucc
 
